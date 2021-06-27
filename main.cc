@@ -60,9 +60,13 @@ class State {
             GL_VERTEX_SHADER, "#version 330 core\n"
                               "\n"
                               "layout(location = 0) in vec4 position;\n"
+                              "uniform float u_scale;"
                               "\n"
                               "void main() {\n"
                               "    gl_Position = position;\n"
+                              "    gl_Position.x *= u_scale;\n"
+                              "    gl_Position.y *= u_scale;\n"
+                              "    gl_Position.z *= u_scale;\n"
                               "}\n");
         unsigned int fragmentShader = createShader(
             GL_FRAGMENT_SHADER, "#version 330 core\n"
@@ -80,6 +84,10 @@ class State {
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
         glUseProgram(program);
+
+        /* Uniform setup */
+        int uScaleLocation = glGetUniformLocation(program, "u_scale");
+        glUniform1f(uScaleLocation, 1.5f);
     }
 
     void render() {
