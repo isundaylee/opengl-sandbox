@@ -11,8 +11,12 @@
 class State {
   private:
     unsigned int vbo;
+
     unsigned int abo;
     std::vector<float> aboData;
+
+    unsigned int ibo;
+    std::vector<unsigned int> iboData;
 
     unsigned int program;
 
@@ -39,6 +43,17 @@ class State {
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2,
                               reinterpret_cast<const void *>(0));
+
+        /* Index buffer setup */
+        iboData.reserve(3);
+        iboData.push_back(0);
+        iboData.push_back(1);
+        iboData.push_back(2);
+        glGenBuffers(1, &ibo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                     iboData.size() * sizeof(unsigned int), iboData.data(),
+                     GL_STATIC_DRAW);
 
         /* Shader setup */
         unsigned int vertexShader = createShader(
@@ -70,7 +85,7 @@ class State {
     void render() {
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, NULL);
     }
 
     void cleanUp() { glDeleteProgram(program); }
